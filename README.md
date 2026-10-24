@@ -50,7 +50,12 @@
 | `alfa_rag.py` | профили компаний, фрагменты аналитики, поиск, отбор новостей |
 | `llm_client.py` | запрос к LLM, таймаут и повторы, промпт, проверка ответа |
 | `pipeline.py` | связывает все части: `analyze_for_company`, `answer_question` |
-| `api_routes.py` | адреса FastAPI: `/api/companies`, `/api/feed`, `/api/analyze`, `/api/ask` |
+| `main.py` | запуск сайта: отдаёт страницу и подключает API |
+| `static/index.html` | интерфейс: выбор компании, лента, карточка новости, вопрос, источники, скачивание дайджеста |
+| `export.py` | экспорт дайджеста разобранных новостей в Markdown |
+| `data/test_news.json` | синтетические тестовые новости (используются, если живой сбор новостей не дал результата) |
+| `data/test_companies.csv` | профили пяти компаний в виде таблицы |
+| `api_routes.py` | адреса FastAPI: `/api/companies`, `/api/feed`, `/api/analyze`, `/api/ask`, `/api/export` |
 | `audit_log.py` | журнал действий ИИ (`logs/audit.jsonl`), список разрешённых инструментов, маскирование ключа |
 | `test_pipeline.py` | быстрая проверка на одной новости (с реальной моделью) |
 | `tests/` | автоматические тесты без интернета и ключа |
@@ -91,8 +96,7 @@ Linux/macOS: `export LLM_API_KEY="sk-..."`
 1. `pip install -r requirements.txt`
 2. Задать `LLM_API_KEY` (см. выше).
 3. Проверка сквозного сценария: `python test_pipeline.py` (или `python test_pipeline.py nlmk`).
-4. API (после подключения `api_routes` в `main.py`: `app.include_router(router)`):
-   `uvicorn main:app --reload`, документация адресов на `/docs`.
+4. Сайт и API: `py -m uvicorn main:app --reload`, сайт на `http://127.0.0.1:8000`, документация адресов на `/docs`.
 
 ### Тесты
 `py -m unittest discover -s tests -v` (без ключа и интернета).
@@ -105,6 +109,10 @@ docker run -p 8000:8000 -e LLM_API_KEY=sk-... alfa-news
 
 ### Зафиксировать версии библиотек
 В чистом окружении: `py -m venv venv`, `venv\Scripts\activate`, `pip install -r requirements.txt`, `pip freeze > requirements.lock.txt`.
+
+### Данные
+- Новости: `parser.py` собирает ленты и сохраняет `news.json`. Если файла нет, он создаётся при первом запросе. Если новостей нет, лента берёт синтетические новости из `data/test_news.json` (в источнике подписано «Синтетические данные (тест)»).
+- Ссылки на документы банка: положите PDF в папку `documents/` (имена как в поле `source` фрагментов), и в источниках появится ссылка на нужную страницу. Либо внесите ссылки в `data/doc_urls.json` вида `{"файл.pdf": "https://..."}`.
 
 Доступные компании: `polyus`, `rusgidro`, `severstal`, `nlmk`, `mmk`.
 
