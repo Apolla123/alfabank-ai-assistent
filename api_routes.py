@@ -1,31 +1,23 @@
 """
-api_routes.py - адреса (эндпоинты) FastAPI для анализа новостей через LLM.
-
-Подключение в main.py (две строки):
-    from api_routes import router
-    app.include_router(router)
-
 Адреса:
     GET  /api/companies   - список компаний (id, отрасль)
-    GET  /api/feed        - лента новостей для компании (?company=polyus&limit=10), без трат на LLM
+    GET  /api/feed        - лента новостей для компании
     POST /api/analyze     - анализ новости для компании
     POST /api/ask         - вопрос по новости
-
-Ключ LLM_API_KEY хранится только на сервере (переменная окружения), в браузер не попадает.
 """
 from fastapi import APIRouter
 from pydantic import BaseModel
-
 from alfa_rag import COMPANIES, get_company_profile, load_news, select_company_news
 from pipeline import analyze_for_company, answer_question, resolve_profile
+
 
 router = APIRouter(prefix="/api")
 
 
 class AnalyzeIn(BaseModel):
     company_id: str
-    news: dict          # title, description, source, date, link
-
+    news: dict          
+    
 
 class AskIn(AnalyzeIn):
     question: str
@@ -38,7 +30,7 @@ def list_companies():
 
 @router.get("/feed")
 def feed(company: str, limit: int = 10):
-    """Лента новостей, отобранных под компанию (поиск Бориса, LLM не вызывается)."""
+    # Лента новостей, отобранных под компанию.
     try:
         profile = resolve_profile(company)
     except KeyError as e:
@@ -49,7 +41,6 @@ def feed(company: str, limit: int = 10):
 
 @router.post("/analyze")
 def analyze(body: AnalyzeIn):
-    # обычная def-функция: FastAPI сам запускает её в отдельном потоке, сервер не зависает
     result = analyze_for_company(body.company_id, body.news)
     return result
 
