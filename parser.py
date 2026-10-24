@@ -1,4 +1,3 @@
-import hashlib
 import json
 import logging
 import re
@@ -18,12 +17,12 @@ socket.setdefaulttimeout(15)
 
 SOURCES = {"Habr": "https://habr.com/ru/rss/news/all/?fl=ru",
            "VC.ru": "https://vc.ru/rss",
-           "Tproger": "https://tproger.ru/feed"}
+           "NEWSru": "https://rss.newsru.com/finance"} 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
            "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8"}
 
 # надёжность источника 0-1
-SOURCE_WEIGHTS = {"Habr": 0.9, "VC.ru": 0.7, "Tproger": 0.75}
+SOURCE_WEIGHTS = {"Habr": 0.9, "VC.ru": 0.7, "NEWSru": 0.7}
 # порог похожести заголовков при объединении
 THRESHOLD = 0.5
 NO_CATEGORY = "Без категории"
@@ -151,7 +150,7 @@ def BuildRecord(group: list) -> dict:
     return {"source": main["source"], "sources": sorted({g["source"] for g in group}),
             "title": main["title"], "description": max((g["description"] for g in group), key=len),
             "category": ", ".join(sorted(tags)) or NO_CATEGORY, "date": Fmt(dt), "link": main["link"],
-            "links": list(links.values()), "merged_count": len(links), "dt": dt}
+            "links": list(links.values()),"dt": dt}
 
 
 # оценки 0-100
@@ -184,18 +183,18 @@ def ParseAndSave(output_file: str = "news.json") -> list:
     items = Deduplicate([i for name, url in SOURCES.items() for i in LoadSource(name, url)])
     records = sorted((BuildRecord(g) for g in Merge(items)), key=lambda r: r["dt"].timestamp() if r["dt"] else 0, reverse=True)
     result = []
-    for r in records:
+    for n, r in enumerate(records, 1):
         try:
             scores = Scores(r)
         except Exception as e:
             log.warning("Не удалось оценить '%s': %s", r["title"], e)
-            continue
+            scores = {}
 
         # Не сохраняем новости без связи с банковской сферой
         if scores["banking_relation"] == 0:
             continue
 
-        result.append({"id": len(result) + 1, **{k: v for k, v in r.items() if k != "dt"}, "scores": scores})
+        result.append({"id": n, **{k: v for k, v in r.items() if k != "dt"}, "scores": scores})
 
     try:
         with open(output_file, "w", encoding="utf-8") as f:
@@ -206,4 +205,4 @@ def ParseAndSave(output_file: str = "news.json") -> list:
 
 
 if __name__ == "__main__":
-    ParseAndSave()
+    ParseAndSave() 
