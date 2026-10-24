@@ -30,5 +30,8 @@ if result["ok"]:
     print(json.dumps(result["sources"], ensure_ascii=False, indent=2))
     if result["warnings"]:
         print("\nПРЕДУПРЕЖДЕНИЯ:", result["warnings"])
+    print("\nШАГИ АГЕНТА (журнал также в logs/audit.jsonl):")
+    for e in result.get("trace", []):
+        print(" -", e["kind"], {k: v for k, v in e.items() if k not in ("time", "trace_id", "kind")})
 else:
     print("ОШИБКА:", result["error"])

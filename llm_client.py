@@ -19,6 +19,8 @@ import time
 
 import requests
 
+from audit_log import log_event
+
 # Разрешённые в кейсе модели (для справки; точные названия для API уточни у организаторов)
 ALLOWED_MODELS = [
     "google/gemma-4-26b-a4b-it",
@@ -62,8 +64,10 @@ def call_llm(messages, temperature=0.2, max_tokens=6000):
         "max_tokens": max_tokens,
     }
 
+    prompt_chars = sum(len(str(m.get("content", ""))) for m in messages)
     last_error = "неизвестная ошибка"
     for attempt in range(RETRIES + 1):
+        started = time.time()
         try:
             resp = requests.post(url, headers=headers, json=body, timeout=timeout)
         except requests.exceptions.Timeout:
@@ -80,10 +84,15 @@ def call_llm(messages, temperature=0.2, max_tokens=6000):
                     finish = choice.get("finish_reason")
                 except (KeyError, IndexError, ValueError, TypeError):
                     raise LLMError("Модель вернула ответ в неожиданном формате.")
+                log_event("llm_call", model=model, attempt=attempt + 1, status=200,
+                          seconds=round(time.time() - started, 1), prompt_chars=prompt_chars,
+                          answer_chars=len(content or ""), finish_reason=finish)
                 if content and content.strip():
                     return content
                 # пустой ответ: у "думающих" моделей так бывает, если все токены ушли на размышления
                 last_error = f"модель вернула пустой ответ (finish_reason={finish})"
+            log_event("llm_call", model=model, attempt=attempt + 1, status=resp.status_code,
+                      seconds=round(time.time() - started, 1), prompt_chars=prompt_chars)
             if "budget has been exceeded" in resp.text.lower():
                 raise LLMError("Дневной бюджет ключа исчерпан (Budget has been exceeded). "
                                "Лимит сбрасывается в 3:00 по Москве.")
@@ -98,6 +107,7 @@ def call_llm(messages, temperature=0.2, max_tokens=6000):
             else:
                 raise LLMError(f"Ошибка API {resp.status_code}: {resp.text[:200]}")
 
+        log_event("llm_error", attempt=attempt + 1, error=last_error)
         if attempt < RETRIES:
             time.sleep(2 * (attempt + 1))  # ждём 2, потом 4 секунды и пробуем снова
 
@@ -308,7 +318,7 @@ def build_sources(news, chunks, answer):
 # ---------------------------------------------------------------------------
 # 4. Главные функции
 # ---------------------------------------------------------------------------
-def analyze_news(company_profile, news, chunks, max_attempts=2):
+def analyze_news(company_profile, news, chunks, max_attempts=2, revise=True):
     """
     Возвращает словарь:
       {"ok": True,  "answer": {...}, "sources": [...], "warnings": [...]}
@@ -336,7 +346,11 @@ def analyze_news(company_profile, news, chunks, max_attempts=2):
             continue
 
         errors, warnings = validate(answer, company_profile, news, chunks)
+        log_event("self_check", errors=errors, warnings=warnings)
         if not errors:
+            if warnings and revise:
+                answer, warnings = _revise(messages, raw, answer, warnings,
+                                           company_profile, news, chunks)
             return {
                 "ok": True,
                 "answer": answer,
@@ -353,6 +367,31 @@ def analyze_news(company_profile, news, chunks, max_attempts=2):
         ]
 
     return {"ok": False, "error": f"Модель не смогла дать корректный ответ ({last_problem})."}
+
+
+def _revise(messages, raw, answer, warnings, profile, news, chunks):
+    """
+    Самопроверка: если в ответе есть числа без подтверждения, просим модель исправить
+    ответ ОДИН раз. Берём исправленный вариант, только если он реально лучше.
+    """
+    fix_messages = messages + [
+        {"role": "assistant", "content": raw},
+        {"role": "user", "content": "Проверка нашла проблемы: " + "; ".join(warnings)
+         + ". Убери эти числа или перепиши без них, если их нет во входных данных. "
+           "Остальное сохрани. Верни ТОЛЬКО корректный JSON по той же схеме."},
+    ]
+    try:
+        new_answer = parse_json(call_llm(fix_messages))
+    except (LLMError, ValueError):
+        log_event("decision", note="исправление не удалось, оставлен исходный ответ")
+        return answer, warnings
+    new_errors, new_warnings = validate(new_answer, profile, news, chunks)
+    if not new_errors and len(new_warnings) < len(warnings):
+        log_event("decision", note="принят исправленный ответ", warnings_before=len(warnings),
+                  warnings_after=len(new_warnings))
+        return new_answer, new_warnings
+    log_event("decision", note="исправленный ответ не лучше, оставлен исходный")
+    return answer, warnings
 
 
 def ask_question(company_profile, news, chunks, question):

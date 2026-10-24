@@ -1,6 +1,6 @@
 feedparser==6.0.11
 pdfplumber==0.11.4
 pytesseract==0.3.13
-requests
-fastapi
-uvicorn
+requests>=2.31,<3
+fastapi>=0.110,<1
+uvicorn>=0.29,<1
