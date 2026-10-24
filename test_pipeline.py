@@ -1,0 +1,34 @@
+"""
+Тест без data.json: берёт профиль и аналитику из alfa_rag.py, новость - встроенную.
+
+Запуск:  python test_pipeline.py            (компания polyus)
+         python test_pipeline.py nlmk       (другая компания: polyus, rusgidro, severstal, nlmk, mmk)
+"""
+import json
+import sys
+
+from pipeline import analyze_for_company
+
+company = sys.argv[1] if len(sys.argv) > 1 else "polyus"
+
+news = {
+    "title": "ЦБ сохранил ключевую ставку на уровне 14%",
+    "description": "Банк России оставил ключевую ставку без изменений на уровне 14% годовых "
+                   "и заявил, что дальнейшие решения будут зависеть от инфляции.",
+    "source": "Тестовая новость",
+    "date": "11.09.2026",
+    "link": "",
+}
+
+print(f"Компания: {company}\nНовость: {news['title']}\nОтправляю в модель, подожди до минуты...\n")
+result = analyze_for_company(company, news)
+
+if result["ok"]:
+    print("Найдено кусков аналитики:", len(result["chunks"]))
+    print(json.dumps(result["answer"], ensure_ascii=False, indent=2))
+    print("\nИСТОЧНИКИ:")
+    print(json.dumps(result["sources"], ensure_ascii=False, indent=2))
+    if result["warnings"]:
+        print("\nПРЕДУПРЕЖДЕНИЯ:", result["warnings"])
+else:
+    print("ОШИБКА:", result["error"])
