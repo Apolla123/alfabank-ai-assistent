@@ -7,17 +7,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-# профили компаний + аналитика Альфа-Банка для ИИ.
-
-"""
-Что внутри:
-  1. get_company_profile(company_id)          - профиль компании (неизвестное = "неизвестно")
-  2. build_chunks_from_pdfs(pdf_dir)          - PDF -> фрагменты (title, chunk_id, text, page, pages, source, url)
-  3. search_bank_analytics(profile, news, k)  - 3-5 самых подходящих фрагментов (только реально найденные)
-
-Зависимости: стандартная библиотека. Для build_chunks_from_pdfs: pdfplumber,
-а для сканов ещё pytesseract + tesseract-ocr-rus (apt install tesseract-ocr-rus).
-"""
 
 HERE = Path(__file__).parent
 # фрагменты, уже подготовленные из PDF
