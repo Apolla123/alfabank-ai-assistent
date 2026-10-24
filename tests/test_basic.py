@@ -1,17 +1,13 @@
-"""
-Тесты без интернета и без ключа. Запуск из корня проекта:
-    py -m unittest discover -s tests -v
-"""
+# Запуск из корня проекта: py -m unittest discover -s tests -v
 import os
 import sys
 import tempfile
 import unittest
+import audit_log
+import llm_client as lc
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["AUDIT_LOG_PATH"] = os.path.join(tempfile.gettempdir(), "audit_test.jsonl")
-
-import audit_log  # noqa: E402
-import llm_client as lc  # noqa: E402
 
 PROFILE = {"company_id": "polyus", "industry": "золото", "revenue": "неизвестно"}
 NEWS = {"title": "ЦБ сохранил ставку 14%", "description": "Ставка 14% годовых.",
@@ -21,12 +17,10 @@ CHUNKS = [{"chunk_id": 1, "title": "Ставка 14,0%", "text": "Прогноз
 
 
 def good_answer():
-    return {
-        "what_happened": "ЦБ сохранил ставку 14%", "why_important": "дорогой кредит",
-        "risks": [{"text": "долг дорожает", "basis": "bank_analytics", "chunk_ids": [1]}],
-        "opportunities": [{"text": "золото", "basis": "ai_estimate", "chunk_ids": []}],
-        "actions": ["проверить долг"], "bank_view": "ставка 14,0%", "uncertainty": "нет данных",
-    }
+    return {"what_happened": "ЦБ сохранил ставку 14%", "why_important": "дорогой кредит",
+            "risks": [{"text": "долг дорожает", "basis": "bank_analytics", "chunk_ids": [1]}],
+            "opportunities": [{"text": "золото", "basis": "ai_estimate", "chunk_ids": []}],
+            "actions": ["проверить долг"], "bank_view": "ставка 14,0%", "uncertainty": "нет данных"}
 
 
 class ParseTests(unittest.TestCase):
