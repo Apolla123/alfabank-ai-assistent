@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новостная аналитика</title>
+<style>
+  :root {
+    --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --line:#e3e6eb;
+    --red:#ef3124; --red-soft:#fdecea; --blue:#2563eb; --blue-soft:#e8f0fe;
+    --green:#15803d; --green-soft:#e7f6ec; --amber:#b45309; --amber-soft:#fef3c7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14161a; --card:#1d2026; --text:#eceef2; --muted:#9aa1ad; --line:#2d313a;
+      --red-soft:#3a1c1a; --blue-soft:#1b2a45; --green-soft:#16301f; --amber-soft:#3a2d12;
+      --blue:#7aa7ff; --green:#5fd48a; --amber:#f0b45a; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  header { padding:20px 16px 8px; max-width:1100px; margin:0 auto; }
+  h1 { margin:0; font-size:22px; }
+  header p { margin:4px 0 0; color:var(--muted); font-size:14px; }
+  main { max-width:1100px; margin:0 auto; padding:8px 16px 48px; }
+  .companies { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px; }
+  .companies button { border:1px solid var(--line); background:var(--card); color:var(--text);
+    padding:8px 16px; border-radius:999px; cursor:pointer; font-size:15px; }
+  .companies button.active { background:var(--red); border-color:var(--red); color:#fff; }
+  .layout { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:16px; align-items:start; }
+  @media (max-width:800px) { .layout { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .card h2 { margin:0 0 8px; font-size:16px; }
+  .profile { font-size:14px; color:var(--muted); }
+  .profile b { color:var(--text); font-weight:600; }
+  .news { list-style:none; margin:0; padding:0; }
+  .news li { border-top:1px solid var(--line); padding:10px 0; cursor:pointer; }
+  .news li:first-child { border-top:0; }
+  .news li:hover .t, .news li.active .t { color:var(--red); }
+  .news .t { font-weight:600; font-size:15px; }
+  .news .m { font-size:12px; color:var(--muted); margin-top:2px; }
+  .muted { color:var(--muted); font-size:14px; }
+  .btn { background:var(--red); color:#fff; border:0; border-radius:8px; padding:10px 18px;
+    font-size:15px; cursor:pointer; }
+  .btn:disabled { opacity:.6; cursor:wait; }
+  .btn.ghost { background:transparent; color:var(--text); border:1px solid var(--line); }
+  .sec { margin-top:16px; }
+  .sec h3 { margin:0 0 6px; font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .item { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+  .tag { display:inline-block; font-size:12px; font-weight:600; border-radius:6px; padding:2px 8px; margin-bottom:4px; }
+  .tag.bank { background:var(--blue-soft); color:var(--blue); }
+  .tag.ai { background:var(--amber-soft); color:var(--amber); }
+  .tag.ok { background:var(--green-soft); color:var(--green); }
+  ul.plain { margin:0; padding-left:20px; }
+  .err { background:var(--red-soft); color:var(--red); border-radius:8px; padding:10px 12px; margin-top:12px; }
+  .warn { background:var(--amber-soft); color:var(--amber); border-radius:8px; padding:10px 12px; margin-top:12px; font-size:14px; }
+  .src { font-size:14px; padding:6px 0; border-top:1px solid var(--line); }
+  .src:first-child { border-top:0; }
+  .src a { color:var(--blue); }
+  details { margin-top:12px; }
+  summary { cursor:pointer; color:var(--muted); font-size:14px; }
+  pre { white-space:pre-wrap; font-size:12px; background:var(--bg); padding:8px; border-radius:8px; overflow:auto; }
+  .ask { display:flex; gap:8px; margin-top:8px; }
+  .ask input { flex:1; padding:10px 12px; border:1px solid var(--line); border-radius:8px;
+    background:var(--card); color:var(--text); font-size:15px; }
+  .answer { margin-top:10px; white-space:pre-wrap; }
+  .legend { font-size:13px; color:var(--muted); margin-top:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Новостная аналитика для руководителя</h1>
+  <p>Выберите компанию, затем новость. Вывод аналитики Альфа-Банка и оценка ИИ показаны отдельно.</p>
+</header>
+<main>
+  <div class="companies" id="companies"></div>
+  <div class="layout">
+    <section>
+      <div class="card profile" id="profile"><span class="muted">Выберите компанию.</span></div>
+      <div class="card" style="margin-top:16px">
+        <h2>Важные новости</h2>
+        <ul class="news" id="news"><li class="muted">Здесь появится лента.</li></ul>
+        <button class="btn ghost" id="exportBtn" style="margin-top:12px" hidden>Скачать дайджест (.md)</button>
+      </div>
+    </section>
+    <section class="card" id="detail">
+      <span class="muted">Выберите новость в ленте, чтобы увидеть, что она значит для компании.</span>
+    </section>
+  </div>
+</main>
+
+<script>
+const COMPANIES = [
+  ["mmk","ММК"], ["nlmk","НЛМК"], ["polyus","Полюс"], ["rusgidro","РусГидро"], ["severstal","Северсталь"]
+];
+const state = { company:null, profile:null, news:[], current:null };
+const cache = {};   // результаты анализа: повторный клик не тратит бюджет модели
+
+const $ = id => document.getElementById(id);
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function safeUrl(u) { return typeof u === "string" && /^https?:\/\//i.test(u) ? u : null; }
+
+async function api(path, body) {
+  const opts = body ? { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) } : {};
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error("Сервер вернул ошибку " + r.status);
+  return r.json();
+}
+
+// ---- компании ----
+const box = $("companies");
+COMPANIES.forEach(([id, name]) => {
+  const b = el("button", "", name);
+  b.onclick = () => selectCompany(id, b);
+  box.appendChild(b);
+});
+
+async function selectCompany(id, btn) {
+  box.querySelectorAll("button").forEach(x => x.classList.remove("active"));
+  btn.classList.add("active");
+  state.company = id; state.current = null;
+  $("exportBtn").hidden = !Object.values(cache).some(x => x.company === id);
+  $("detail").replaceChildren(el("span", "muted", "Выберите новость в ленте."));
+  $("news").replaceChildren(el("li", "muted", "Загружаем ленту…"));
+  try {
+    const data = await api("/api/feed?company=" + encodeURIComponent(id) + "&limit=10");
+    if (!data.ok) throw new Error(data.error || "Не удалось получить ленту");
+    state.profile = data.profile; state.news = data.news || [];
+    renderProfile(); renderNews();
+  } catch (e) {
+    $("news").replaceChildren(el("li", "err", e.message));
+  }
+}
+
+function renderProfile() {
+  const p = state.profile || {};
+  const box = $("profile");
+  box.replaceChildren();
+  const rows = [["Отрасль", p.industry], ["Выручка", p.revenue], ["Регион", p.region],
+                ["Сотрудники", p.employees], ["Продукты", p.products]];
+  rows.forEach(([k, v]) => {
+    const d = el("div");
+    d.appendChild(el("b", "", k + ": "));
+    d.appendChild(document.createTextNode(v || "неизвестно"));
+    box.appendChild(d);
+  });
+}
+
+function renderNews() {
+  const ul = $("news");
+  ul.replaceChildren();
+  if (!state.news.length) { ul.appendChild(el("li", "muted", "Подходящих новостей не найдено.")); return; }
+  state.news.forEach((n, i) => {
+    const li = el("li");
+    li.appendChild(el("div", "t", n.title || "Без заголовка"));
+    li.appendChild(el("div", "m", [n.source, n.date].filter(Boolean).join(" · ")));
+    li.onclick = () => { ul.querySelectorAll("li").forEach(x => x.classList.remove("active"));
+                         li.classList.add("active"); openNews(i); };
+    ul.appendChild(li);
+  });
+}
+
+// ---- экспорт дайджеста (без обращения к модели) ----
+$("exportBtn").onclick = async () => {
+  const items = Object.values(cache).filter(x => x.company === state.company).map(x => ({ news: x.news, result: x.result }));
+  if (!items.length) return;
+  const r = await fetch("/api/export", { method:"POST", headers:{"Content-Type":"application/json"},
+                                         body: JSON.stringify({ company_id: state.company, items }) });
+  const blob = await r.blob();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "digest_" + state.company + ".md";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+// ---- карточка новости ----
+function openNews(i) {
+  const n = state.news[i];
+  state.current = n;
+  const d = $("detail");
+  d.replaceChildren();
+  d.appendChild(el("h2", "", n.title || ""));
+  if (n.description) d.appendChild(el("p", "muted", n.description));
+  const link = safeUrl(n.link);
+  if (link) {
+    const a = el("a", "", "Открыть первоисточник новости ↗");
+    a.href = link; a.target = "_blank"; a.rel = "noopener noreferrer";
+    d.appendChild(a);
+  }
+  const holder = el("div"); holder.id = "analysis";
+  d.appendChild(holder);
+  const key = state.company + "|" + (n.link || n.title);
+  if (cache[key]) { renderAnalysis(cache[key].result); return; }
+  const go = el("button", "btn", "Разобрать для компании");
+  go.style.marginTop = "12px";
+  go.onclick = () => runAnalysis(n, key, go);
+  holder.appendChild(go);
+  holder.appendChild(el("div", "legend", "Анализ занимает до минуты и тратит общий бюджет, запускайте по одной новости."));
+}
+
+async function runAnalysis(n, key, btn) {
+  btn.disabled = true; btn.textContent = "Анализируем… (до минуты)";
+  try {
+    const res = await api("/api/analyze", { company_id: state.company, news: n });
+    if (state.current !== n) return;
+    if (res.ok) { cache[key] = { news: n, result: res, company: state.company }; $("exportBtn").hidden = false; }
+    renderAnalysis(res);
+  } catch (e) {
+    if (state.current !== n) return;
+    renderAnalysis({ ok:false, error:e.message });
+  }
+}
+
+function basisTag(basis) {
+  return basis === "bank_analytics"
+    ? el("span", "tag bank", "Аналитика Альфа-Банка")
+    : el("span", "tag ai", "Оценка ИИ");
+}
+
+function listItems(title, items) {
+  const s = el("div", "sec");
+  s.appendChild(el("h3", "", title));
+  if (!items || !items.length) { s.appendChild(el("div", "muted", "Нет")); return s; }
+  items.forEach(it => {
+    const d = el("div", "item");
+    d.appendChild(basisTag(it.basis));
+    if (it.chunk_ids && it.chunk_ids.length) {
+      d.appendChild(el("span", "muted", "  фрагменты: " + it.chunk_ids.join(", ")));
+    }
+    d.appendChild(el("div", "", it.text));
+    s.appendChild(d);
+  });
+  return s;
+}
+
+function renderAnalysis(res) {
+  const h = $("analysis"); h.replaceChildren();
+  if (!res.ok) {
+    h.appendChild(el("div", "err", res.error || "Не удалось получить анализ."));
+    const again = el("button", "btn ghost", "Попробовать ещё раз");
+    again.style.marginTop = "8px";
+    again.onclick = () => openNews(state.news.indexOf(state.current));
+    h.appendChild(again);
+    return;
+  }
+  const a = res.answer;
+  const sec = (t, txt) => { const s = el("div", "sec"); s.appendChild(el("h3", "", t)); s.appendChild(el("div", "", txt)); return s; };
+  h.appendChild(sec("Что произошло", a.what_happened));
+  h.appendChild(sec("Почему важно именно для этой компании", a.why_important));
+  h.appendChild(listItems("Риски", a.risks));
+  h.appendChild(listItems("Возможности", a.opportunities));
+
+  const acts = el("div", "sec"); acts.appendChild(el("h3", "", "Что можно сделать"));
+  const ul = el("ul", "plain"); (a.actions || []).forEach(x => ul.appendChild(el("li", "", x)));
+  acts.appendChild(ul); h.appendChild(acts);
+
+  const bank = el("div", "sec"); bank.appendChild(el("h3", "", "Как это оценивает банк"));
+  const bd = el("div", "item"); bd.appendChild(el("span", "tag bank", "Аналитика Альфа-Банка"));
+  bd.appendChild(el("div", "", a.bank_view)); bank.appendChild(bd); h.appendChild(bank);
+
+  h.appendChild(sec("Что неизвестно", a.uncertainty));
+
+  if (res.warnings && res.warnings.length) h.appendChild(el("div", "warn", "Проверьте вручную: " + res.warnings.join("; ")));
+
+  const src = el("div", "sec"); src.appendChild(el("h3", "", "На чём основан вывод"));
+  (res.sources || []).forEach(s => {
+    const d = el("div", "src");
+    if (s.type === "news") {
+      d.appendChild(el("span", "tag ok", "Новость"));
+      d.appendChild(document.createTextNode(" " + s.title + (s.source ? " (" + s.source + ")" : "") + " "));
+      const u = safeUrl(s.link);
+      if (u) { const a2 = el("a", "", "первоисточник ↗"); a2.href = u; a2.target = "_blank"; a2.rel = "noopener noreferrer"; d.appendChild(a2); }
+    } else {
+      d.appendChild(el("span", "tag bank", "Альфа-Банк, фрагмент " + s.chunk_id));
+      d.appendChild(document.createTextNode(" " + s.title + " — " + s.document + ", стр. " + s.page + " "));
+      const u = safeUrl(s.url);
+      if (u) { const a2 = el("a", "", "открыть документ ↗"); a2.href = u; a2.target = "_blank"; a2.rel = "noopener noreferrer"; d.appendChild(a2); }
+    }
+    src.appendChild(d);
+  });
+  h.appendChild(src);
+
+  if (res.trace && res.trace.length) {
+    const det = el("details"); det.appendChild(el("summary", "", "Как ИИ пришёл к выводу (шаги агента)"));
+    det.appendChild(el("pre", "", res.trace.map(e => e.time + "  " + e.kind + "  " +
+      JSON.stringify(Object.fromEntries(Object.entries(e).filter(([k]) => !["time","trace_id","kind"].includes(k))))).join("\n")));
+    h.appendChild(det);
+  }
+
+  // уточняющий вопрос
+  const q = el("div", "sec"); q.appendChild(el("h3", "", "Задать вопрос по новости"));
+  const row = el("div", "ask");
+  const inp = el("input"); inp.placeholder = "Например: как это повлияет на наш долг?";
+  const btn = el("button", "btn", "Спросить");
+  const out = el("div", "answer");
+  const send = async () => {
+    const text = inp.value.trim(); if (!text) return;
+    btn.disabled = true; out.textContent = "Думаю…";
+    try {
+      const r = await api("/api/ask", { company_id: state.company, news: state.current, question: text });
+      out.textContent = r.ok ? r.text : "Ошибка: " + r.error;
+    } catch (e) { out.textContent = "Ошибка: " + e.message; }
+    btn.disabled = false;
+  };
+  btn.onclick = send; inp.onkeydown = e => { if (e.key === "Enter") send(); };
+  row.append(inp, btn); q.append(row, out); h.appendChild(q);
+}
+</script>
+</body>
+</html>

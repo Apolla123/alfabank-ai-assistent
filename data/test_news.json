@@ -1,0 +1,761 @@
+[
+  {
+    "id": 1,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "ЦБ сохранил ключевую ставку на уровне 14%",
+    "description": "Банк России на заседании 11 сентября оставил ключевую ставку без изменений на уровне 14% годовых и заявил, что дальнейшие решения будут зависеть от динамики инфляции и инфляционных ожиданий. Вариант снижения ставки на этом заседании не рассматривался.",
+    "category": "Экономика, Банки, Ключевая ставка",
+    "date": "11.09.2026 18:00",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 39,
+      "industry_match": 0,
+      "region_match": 70,
+      "financial_impact": 0,
+      "banking_relation": 100,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 39,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 41,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 0,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 39,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 39,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 39,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 2,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Доходность ОФЗ выросла после паузы в цикле снижения ставки",
+    "description": "После решения Банка России сохранить ставку доходности облигаций федерального займа выросли. Рынок пересматривает ожидания по срокам снижения ставки, стоимость заёмного капитала для компаний остаётся высокой.",
+    "category": "Экономика, Облигации, ОФЗ",
+    "date": "14.09.2026 12:30",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 34,
+      "industry_match": 0,
+      "region_match": 70,
+      "financial_impact": 0,
+      "banking_relation": 80,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 70,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 3,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "ФРС сохранила ставку, ожидания следующего шага изменились",
+    "description": "Федеральная резервная система США не изменила ставку, но инвесторы пересмотрели ожидания по её следующему шагу. Это влияет на курс доллара и мировые цены на золото и другие товары.",
+    "category": "Экономика, ФРС, Золото",
+    "date": "16.09.2026 21:00",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 16,
+      "industry_match": 0,
+      "region_match": 10,
+      "financial_impact": 20,
+      "banking_relation": 40,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 37,
+        "industry_match": 60,
+        "region_match": 10,
+        "financial_impact": 20,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 16,
+        "industry_match": 0,
+        "region_match": 10,
+        "financial_impact": 20,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 16,
+        "industry_match": 0,
+        "region_match": 10,
+        "financial_impact": 20,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 16,
+        "industry_match": 0,
+        "region_match": 10,
+        "financial_impact": 20,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 16,
+        "industry_match": 0,
+        "region_match": 10,
+        "financial_impact": 20,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 4,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Цены на золото скорректировались после продолжительного роста",
+    "description": "Мировые цены на золото снизились после продолжительного роста. Аналитики связывают коррекцию с жёсткой риторикой центральных банков и укреплением доллара. Золотодобывающие компании следят за курсом рубля и ставкой.",
+    "category": "Золото, Драгметаллы, Рынки",
+    "date": "18.09.2026 10:15",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 32,
+      "industry_match": 0,
+      "region_match": 30,
+      "financial_impact": 80,
+      "banking_relation": 40,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 53,
+        "industry_match": 60,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 32,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 32,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 32,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 32,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 5,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Золотодобытчики пересматривают инвестиции в новые месторождения из-за дорогих кредитов",
+    "description": "Из-за высокой стоимости заёмного финансирования золотодобывающие компании пересматривают сроки запуска новых рудников и приоритизируют проекты с быстрой окупаемостью. Банки отмечают спрос на рефинансирование долга.",
+    "category": "Золото, Добыча, Кредиты",
+    "date": "19.09.2026 09:40",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 34,
+      "industry_match": 0,
+      "region_match": 30,
+      "financial_impact": 40,
+      "banking_relation": 80,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 69,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 34,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 41,
+        "industry_match": 20,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 41,
+        "industry_match": 20,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 41,
+        "industry_match": 20,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 6,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Минэнерго обсуждает индексацию тарифов на электроэнергию на Дальнем Востоке",
+    "description": "Обсуждается порядок индексации тарифов на электроэнергию в Дальневосточном федеральном округе. Решение влияет на выручку генерирующих компаний и их инвестиционные программы по модернизации ГЭС.",
+    "category": "Энергетика, Тарифы, Дальний Восток",
+    "date": "20.09.2026 11:00",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 29,
+      "industry_match": 20,
+      "region_match": 30,
+      "financial_impact": 80,
+      "banking_relation": 0,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 22,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 69,
+        "industry_match": 100,
+        "region_match": 90,
+        "financial_impact": 80,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 22,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 22,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 22,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 80,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 7,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Энергокомпании Дальнего Востока сталкиваются с ростом стоимости обслуживания долга",
+    "description": "Высокая ключевая ставка увеличивает финансовые расходы энергокомпаний с большой долговой нагрузкой. Капитальные затраты на модернизацию ГЭС и сетей требуют долгосрочного финансирования.",
+    "category": "Энергетика, Кредиты, Гидроэнергетика",
+    "date": "21.09.2026 15:20",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 39,
+      "industry_match": 0,
+      "region_match": 30,
+      "financial_impact": 40,
+      "banking_relation": 100,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 39,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 77,
+        "industry_match": 80,
+        "region_match": 80,
+        "financial_impact": 40,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 53,
+        "industry_match": 40,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 53,
+        "industry_match": 40,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 53,
+        "industry_match": 40,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 8,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Спрос на плоский прокат в строительстве остаётся слабым при дорогой ипотеке",
+    "description": "Высокие ставки по ипотеке и кредитам для застройщиков сдерживают строительную активность. Это снижает внутренний спрос на плоский прокат, и металлурги переориентируются на экспорт.",
+    "category": "Металлургия, Строительство, Прокат",
+    "date": "22.09.2026 13:10",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 26,
+      "industry_match": 0,
+      "region_match": 30,
+      "financial_impact": 0,
+      "banking_relation": 80,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 26,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 26,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 61,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 61,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 61,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 0,
+        "banking_relation": 80,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 9,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Крепкий рубль снижает рублёвую выручку российских экспортёров стали",
+    "description": "Укрепление рубля уменьшает рублёвый эквивалент валютной выручки металлургических компаний. Экспортёры стали и проката следят за курсом и экспортными пошлинами.",
+    "category": "Металлургия, Экспорт, Рубль",
+    "date": "23.09.2026 09:00",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 36,
+      "industry_match": 0,
+      "region_match": 80,
+      "financial_impact": 100,
+      "banking_relation": 0,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 36,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 100,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 36,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 100,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 71,
+        "industry_match": 100,
+        "region_match": 80,
+        "financial_impact": 100,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 71,
+        "industry_match": 100,
+        "region_match": 80,
+        "financial_impact": 100,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 71,
+        "industry_match": 100,
+        "region_match": 80,
+        "financial_impact": 100,
+        "banking_relation": 0,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 10,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Металлурги отмечают рост стоимости коксующегося угля и железной руды",
+    "description": "Рост цен на сырьё увеличивает себестоимость производства стали. Металлургические компании обсуждают долгосрочные контракты и влияние ставки на оборотный капитал.",
+    "category": "Металлургия, Сырьё, Уголь",
+    "date": "24.09.2026 16:45",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 24,
+      "industry_match": 0,
+      "region_match": 30,
+      "financial_impact": 40,
+      "banking_relation": 40,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 24,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 24,
+        "industry_match": 0,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 59,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 59,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 59,
+        "industry_match": 100,
+        "region_match": 30,
+        "financial_impact": 40,
+        "banking_relation": 40,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  },
+  {
+    "id": 11,
+    "source": "Синтетические данные (тест)",
+    "sources": [
+      "Синтетические данные (тест)"
+    ],
+    "title": "Инфляция в России замедляется, но остаётся выше цели ЦБ",
+    "description": "Недельные данные показывают замедление роста цен. Банк России подчёркивает, что решения по ключевой ставке будут зависеть от устойчивости этого тренда и инфляционных ожиданий бизнеса.",
+    "category": "Экономика, Инфляция, Ключевая ставка",
+    "date": "25.09.2026 10:00",
+    "link": "",
+    "links": [],
+    "scores": {
+      "profile_fit": 52,
+      "industry_match": 20,
+      "region_match": 80,
+      "financial_impact": 20,
+      "banking_relation": 100,
+      "freshness": 30,
+      "source_quality": 50
+    },
+    "scores_by_company": {
+      "polyus": {
+        "profile_fit": 45,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 20,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "rusgidro": {
+        "profile_fit": 45,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 20,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "severstal": {
+        "profile_fit": 45,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 20,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "nlmk": {
+        "profile_fit": 45,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 20,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      },
+      "mmk": {
+        "profile_fit": 45,
+        "industry_match": 0,
+        "region_match": 80,
+        "financial_impact": 20,
+        "banking_relation": 100,
+        "freshness": 30,
+        "source_quality": 50
+      }
+    }
+  }
+]

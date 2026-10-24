@@ -1,10 +1,25 @@
-from alfa_rag import find_company_by_name, get_company_profile, search_bank_analytics
+"""
+pipeline.py - склейка: компания + новость -> профиль -> куски аналитики -> анализ LLM.
+
+Использует:
+  alfa_rag.get_company_profile / search_bank_analytics  (код Бориса)
+  llm_client.analyze_news / ask_question                (код Марины)
+
+Пример:
+    from pipeline import analyze_for_company
+    result = analyze_for_company("polyus", news)   # news - словарь с title, description, link, source, date
+"""
+from alfa_rag import find_company_by_name, get_company_profile, load_news, search_bank_analytics
 from audit_log import check_tool, get_trace, log_event, start_trace
 from llm_client import analyze_news, ask_question
 
+import json
+from pathlib import Path
+from urllib.parse import quote
 
+BASE = Path(__file__).parent
 # если найдено меньше фрагментов аналитики, агент пробует поискать ещё раз
-MIN_CHUNKS = 2   
+MIN_CHUNKS = 2
 TOP_K = 5
 
 
@@ -27,12 +42,51 @@ def resolve_profile(company: str) -> dict:
             raise KeyError(str(e))
 
 
+def load_news_with_fallback():
+    """Новости из news.json (или живой сбор). Если ничего нет, берём синтетические тестовые
+    новости из data/test_news.json (в поле source подписано «Синтетические данные (тест)»)."""
+    news = load_news()
+    if news:
+        return news
+    try:
+        data = json.loads((BASE / "data" / "test_news.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return data if isinstance(data, list) else []
+
+
+def _doc_urls():
+    """Необязательная таблица {"файл.pdf": "https://..."} в data/doc_urls.json."""
+    try:
+        return json.loads((BASE / "data" / "doc_urls.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def attach_urls(chunks):
+    """Добавляет ссылку на документ банка, если у фрагмента её нет:
+    1) из data/doc_urls.json, 2) если PDF лежит в папке documents/ - адрес /documents/файл.pdf#page=N."""
+    table = _doc_urls()
+    for c in chunks:
+        if c.get("url"):
+            continue
+        name = c.get("source") or ""
+        if table.get(name):
+            c["url"] = table[name]
+        elif name and (BASE / "documents" / name).is_file():
+            first_page = str(c.get("page", 1)).replace("-", ",").split(",")[0].strip() or "1"
+            c["url"] = f"/documents/{quote(name)}#page={first_page}"
+    return chunks
+
+
 def _search(profile, news, top_k=TOP_K):
     # Вызов инструмента поиска аналитики с записью в журнал.
     if not check_tool("search_bank_analytics"):
         return []
-    found = search_bank_analytics(profile, news, top_k=top_k)
-    log_event("tool_call", tool="search_bank_analytics", company=profile.get("company_id"), query=news.get("title", ""), found=len(found), chunk_ids=[c.get("chunk_id") for c in found])
+    found = attach_urls(search_bank_analytics(profile, news, top_k=top_k))
+    log_event("tool_call", tool="search_bank_analytics", company=profile.get("company_id"),
+              query=news.get("title", ""), found=len(found),
+              chunk_ids=[c.get("chunk_id") for c in found])
     return found
 
 
