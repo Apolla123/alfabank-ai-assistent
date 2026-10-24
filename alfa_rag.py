@@ -1,8 +1,10 @@
 from __future__ import annotations
+import difflib
 import json
 import math
 import re
 import sys
+from parser import ParseAndSave
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -13,6 +15,7 @@ HERE = Path(__file__).parent
 SEED_PATH = HERE / "seed_chunks.json"
 # результат build_chunks_from_pdfs (приоритетнее seed)
 CHUNKS_PATH = HERE / "chunks.json"
+NEWS_PATH = HERE / "news.json"
 
 
 UNKNOWN = "неизвестно"
@@ -48,6 +51,53 @@ def get_company_profile(company_id: str) -> dict[str, Any]:
         raise KeyError(f"Компания '{company_id}' не найдена. Доступные id: {', '.join(COMPANIES)}")
     c = COMPANIES[key]
     return {f: c[f] for f in _PUBLIC_FIELDS}
+
+
+def _normalize_company_name(text: str) -> str:
+    return re.sub(r"\s+", " ", str(text or "").lower().replace("ё", "е")).strip()
+
+
+def find_company_by_name(query: str) -> str:
+    query = _normalize_company_name(query)
+    if not query:
+        raise ValueError("Название компании пустое")
+
+    query_tokens = set(_company_tokens(query))
+    best_id = None
+    best_score = 0.0
+
+    for company_id, company in COMPANIES.items():
+        variants = [_normalize_company_name(company["company_id"])]
+        variants += [_normalize_company_name(a) for a in company["_aliases"]]
+        score = 0.0
+
+        for variant in variants:
+            variant_tokens = set(_company_tokens(variant))
+            if variant in query or query in variant:
+                score = max(score, 1.0)
+
+            token_overlap = len(query_tokens & variant_tokens) / max(len(variant_tokens), 1)
+            score = max(score, token_overlap)
+            ratio = difflib.SequenceMatcher(None, query, variant).ratio()
+            score = max(score, ratio)
+
+        if score > best_score:
+            best_score = score
+            best_id = company_id
+    if best_id is None or best_score < 0.45:
+        available = ", ".join(sorted(COMPANIES))
+        raise ValueError(f"Не удалось определить компанию по запросу '{query}'. Доступные компании: {available}")
+
+    return best_id
+
+
+def _company_tokens(text: str) -> list[str]:
+    return [t for t in re.findall(r"[a-zа-я0-9]+", _normalize_company_name(text)) if len(t) > 1]
+
+
+def get_profile(name_company: str) -> dict[str, Any]:
+    company_id = find_company_by_name(name_company)
+    return get_company_profile(company_id)
 
 
 _BOILERPLATE = re.compile(r"центр макроэкономического анализа|все права защищены|генеральная лицензия|"
@@ -283,6 +333,75 @@ def search_bank_analytics(company_profile: dict, news: Any, top_k: int = 5, chun
     return result
 
 
+def load_news(path: str | Path = NEWS_PATH) -> list[dict]:
+    path = Path(path)
+
+    if not path.exists():
+        try:
+            ParseAndSave()
+        except Exception as e:
+            print(f"[warn] Не удалось собрать новости: {e}", file=sys.stderr)
+            return []
+
+    if not path.exists():
+        return []
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"[warn] Не удалось прочитать {path.name}: {e}", file=sys.stderr)
+        return []
+
+    return data if isinstance(data, list) else []
+
+
+def select_company_news(company_profile: dict, news_list: list[dict], top_k: int = 5) -> list[dict]:
+    if not news_list:
+        return []
+
+    company_id = str(company_profile.get("company_id", "")).lower()
+    aliases = COMPANIES.get(company_id, {}).get("_aliases", [])
+    aliases = [_normalize_company_name(a) for a in aliases]
+    profile_words = set(_tokens(str(company_profile.get("profile_text", ""))))
+    industry_words = set(_tokens(str(company_profile.get("industry", ""))))
+    region_words = set(_tokens(str(company_profile.get("region", ""))))
+    scored = []
+
+    for news in news_list:
+        if not isinstance(news, dict):
+            continue
+
+        title = str(news.get("title", ""))
+        description = str(news.get("description", ""))
+        category = str(news.get("category", ""))
+        text = f"{title} {description} {category}"
+        normalized_text = _normalize_company_name(text)
+        news_tokens = set(_tokens(text))
+
+        company_match = 0.0
+        for alias in aliases:
+            if alias and alias in normalized_text:
+                company_match = 1.0
+                break
+
+        industry_match = len(industry_words & news_tokens) / max(len(industry_words), 1)
+        region_match = len(region_words & news_tokens) / max(len(region_words), 1)
+        profile_match = len(profile_words & news_tokens) / max(len(profile_words), 1)
+
+        scores = news.get("scores", {}) if isinstance(news.get("scores", {}), dict) else {}
+        relevance = (company_match * 0.45 + industry_match * 0.20 + region_match * 0.10 + profile_match * 0.10 +
+                     float(scores.get("profile_fit", 0)) / 100 * 0.05 + float(scores.get("banking_relation", 0)) / 100 * 0.05 +
+                     float(scores.get("financial_impact", 0)) / 100 * 0.03 + float(scores.get("freshness", 0)) / 100 * 0.02)
+
+        if company_match == 0 and relevance < 0.08:
+            continue
+
+        scored.append((round(relevance, 4), news))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [news for _, news in scored[:top_k]]
+
+
 def format_for_llm(chunks: list[dict]) -> str:
     # Готовый текстовый блок для промпта ИИ с указанием источника и страниц.
     out = []
@@ -291,16 +410,34 @@ def format_for_llm(chunks: list[dict]) -> str:
     return "\n\n".join(out)
 
 
-def _demo() -> None:
-    profile = get_company_profile("polyus")
-    article = {"title": "Полюс увеличил добычу золота",
-               "text": "Цена золота, решение ФРС по ставке и курс доллара остаются в фокусе инвесторов.",}
-    print("ПРОФИЛЬ:")
-    print(json.dumps(profile, ensure_ascii=False, indent=2))
-    chunks = search_bank_analytics(company_profile=profile, news=article, top_k=5)
-    print(f"\nНАЙДЕНО ФРАГМЕНТОВ: {len(chunks)}\n")
-    for c in chunks:
-        print(f"[{c['chunk_id']}] {c['title']}\n    {c['source']}, стр. {c['page']}\n    {c['text'][:150]}...\n")
+def run_for_company(name_company: str, total_items: int = 5) -> dict:
+    profile = get_profile(name_company)
+
+    news_list = load_news()
+
+    all_chunks: list[dict] = []
+    for news in news_list:
+        found = search_bank_analytics(company_profile=profile, news=news, top_k=total_items)
+        all_chunks.extend(found)
+
+    unique_chunks = []
+    seen_ids = set()
+
+    for chunk in all_chunks:
+        chunk_id = chunk.get("chunk_id")
+        if chunk_id not in seen_ids:
+            seen_ids.add(chunk_id)
+            unique_chunks.append(chunk)
+
+    selected_chunks = unique_chunks[:total_items]
+    remaining = max(0, total_items - len(selected_chunks))
+
+    selected_news = []
+    if remaining > 0:
+        selected_news = select_company_news(profile, news_list, top_k=remaining)
+
+    return {"company_profile": profile, "analytics_chunks": selected_chunks, "selected_news": selected_news,
+            "total_items": len(selected_chunks) + len(selected_news), "analytics_text": format_for_llm(selected_chunks)}
 
 
 if __name__ == "__main__":
@@ -308,4 +445,6 @@ if __name__ == "__main__":
         res = build_chunks_from_pdfs(sys.argv[2])
         print(f"Готово: {len(res)} фрагментов -> {CHUNKS_PATH}")
     else:
-        _demo()
+        name = input("Введите название компании: ")
+        result = run_for_company(name)
+        print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
