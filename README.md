@@ -93,19 +93,57 @@ PowerShell: `$env:LLM_API_KEY="sk-..."`
 Linux/macOS: `export LLM_API_KEY="sk-..."`
 
 ## Запуск
-1. `pip install -r requirements.txt`
-2. Задать `LLM_API_KEY` (см. выше).
-3. Проверка сквозного сценария: `python test_pipeline.py` (или `python test_pipeline.py nlmk`).
-4. Сайт и API: `py -m uvicorn main:app --reload`, сайт на `http://127.0.0.1:8000`, документация адресов на `/docs`.
+
+Нужен ключ нейросети `LLM_API_KEY`. В репозитории его нет и быть не должно, его выдают организаторы.
+
+### Вариант 1. Через Docker (рекомендуется)
+Нужен установленный Docker Desktop.
+```
+git clone https://github.com/Apolla123/alfabank-ai-assistent.git
+cd alfabank-ai-assistent
+docker build -t alfa-news .
+docker run -p 8000:8000 -e LLM_API_KEY=ваш_ключ -e LLM_TIMEOUT=120 alfa-news
+```
+Откройте в браузере http://127.0.0.1:8000
+
+### Вариант 2. Без Docker (Windows, PowerShell)
+Нужен Python 3.10 или новее.
+```
+git clone https://github.com/Apolla123/alfabank-ai-assistent.git
+cd alfabank-ai-assistent
+py -m pip install -r requirements.txt
+$env:LLM_API_KEY="ваш_ключ"
+$env:LLM_TIMEOUT="120"
+py -m uvicorn main:app
+```
+Откройте http://127.0.0.1:8000. Окно PowerShell закрывать нельзя, остановка сервера: Ctrl+C. Документация адресов API: `/docs`.
+
+Linux/macOS: вместо `py` используйте `python3`, а ключ задаётся командой `export LLM_API_KEY="ваш_ключ"`.
+
+ИЛИ
+```
+docker run -p 8000:8000 apolla123/alfabank-ai-assistent:latest
+```
+
+### Вариант 3.
+Перейти по ссылке: https://alfabank-ai-assistent.onrender.com
+
+### Быстрая проверка модели без сайта
+`py test_pipeline.py` (или `py test_pipeline.py nlmk`). Расходует часть общего бюджета ключа.
+
+### Сценарий проверки (для жюри)
+1. Откройте сайт, нажмите кнопку компании (например, «Полюс»). Появится лента новостей.
+2. Нажмите «Разобрать для компании». Ответ приходит примерно за 40 секунд, повторно кнопку не нажимайте.
+3. Проверьте карточку: что произошло, риски, возможности, действия, пометки «Аналитика Альфа-Банка» и «Оценка ИИ», источники, блок «шаги агента».
+4. Задайте вопрос в поле «Задать вопрос по новости».
+5. Нажмите «Скачать дайджест (.md)».
+6. Проверка без ключа и интернета: `py -m unittest discover -s tests -v` (17 тестов).
 
 ### Тесты
 `py -m unittest discover -s tests -v` (без ключа и интернета).
 
 ### Docker
-```
-docker build -t alfa-news .
-docker run -p 8000:8000 -e LLM_API_KEY=sk-... alfa-news
-```
+Команды сборки и запуска см. в разделе «Запуск», вариант 1.
 
 ### Зафиксировать версии библиотек
 В чистом окружении: `py -m venv venv`, `venv\Scripts\activate`, `pip install -r requirements.txt`, `pip freeze > requirements.lock.txt`.
