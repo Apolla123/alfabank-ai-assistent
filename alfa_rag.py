@@ -338,7 +338,7 @@ def load_news(path: str | Path = NEWS_PATH) -> list[dict]:
 
     if not path.exists():
         try:
-            ParseAndSave()
+            ParseAndSave(str(path))
         except Exception as e:
             print(f"[warn] Не удалось собрать новости: {e}", file=sys.stderr)
             return []
