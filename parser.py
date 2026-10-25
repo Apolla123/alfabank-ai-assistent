@@ -32,7 +32,7 @@ EPOCH = datetime.min.replace(tzinfo=timezone.utc)
 
 # Профиль компании: основы слов в нижнем регистре.
 # Термины до 3 символов ищутся как целые слова, длиннее - как начало слова.
-PROFILE = {"industry": ["it", "софт", "программ", "разработ", "облач", "нейросет", "финтех", "платформ", "стартап", "цифров", "кибербезопасн", "данны", "saas", "api"],
+PROFILE = {"industry": ["золото", "добыча", "драгоценные металлы", "гидроэнергетика", "электроэнергия", "ГЭС", "тариф", "сталь", "металлургия", "чугун", "прокат", "экспорт"],
            "region": ["росси", "рф", "москв", "санкт-петербург", "спб", "снг"],
            "foreign": ["сша", "китай", "европ", "евросоюз", "индия", "япони", "германи"],
            "financial": ["выручк", "прибыл", "убыт", "капитализац", "инвестиц", "раунд", "сделк", "поглощен", "ipo", "налог", "штраф", "санкци", "бюджет", "рост", "падени", "курс", "рубл", "тариф"],
@@ -239,7 +239,7 @@ def ParseAndSave(output_file=None, profile: Optional[dict] = None) -> list:
     records.sort(key=lambda r: r["dt"].timestamp() if r["dt"] else 0, reverse=True)
 
     result = []
-    for n, r in enumerate(records, 1):
+    for r in records:
         try:
             scores = Scores(r, profile)
         except Exception as e:
@@ -247,7 +247,12 @@ def ParseAndSave(output_file=None, profile: Optional[dict] = None) -> list:
             scores = {k: 0 for k in SCORE_KEYS}  # все ключи на месте, пустого scores не бывает
         # uid не зависит от порядка и остаётся одним и тем же между запусками
         uid = hashlib.md5(NormUrl(r["link"]).encode("utf-8")).hexdigest()[:10]
-        result.append({"id": n, "uid": uid, **{k: v for k, v in r.items() if k != "dt"}, "scores": scores})
+
+        # Не сохраняем новости без связи с банковской сферой
+        if scores.get("banking_relation", 0) == 0:
+            continue
+               
+        result.append({"id": len(result) + 1, "uid": uid, **{k: v for k, v in r.items() if k != "dt"}, "scores": scores})
 
     if not result:
         log.warning("Новостей нет, %s не перезаписан", output_file)
